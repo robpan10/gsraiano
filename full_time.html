@@ -10,17 +10,17 @@ main{max-width:760px;margin:0 auto;padding:18px 14px 34px}h1{font-size:24px;marg
 .panel,.preview{background:white;border-radius:18px;padding:16px;box-shadow:0 3px 18px #20204412;margin-bottom:14px}
 label{display:block;font-weight:650;font-size:14px;margin:0 0 7px}input,textarea{width:100%;border:1px solid #d8d9e5;border-radius:11px;padding:12px;font:inherit;font-size:16px;background:white;color:#17172c}
 textarea{min-height:96px;resize:vertical}.field{margin-top:13px}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.photo-button{display:block;text-align:center;border:0;border-radius:12px;padding:14px 16px;font-size:16px;font-weight:700;width:100%;margin-top:8px;background:var(--blue);color:white;cursor:pointer}.photo-button:active{opacity:.85}button{border:0;border-radius:12px;padding:14px 16px;font-size:16px;font-weight:700;width:100%;background:var(--blue);color:white;margin-top:10px}button.secondary{background:#e9e9f2;color:var(--blue)}
+button{border:0;border-radius:12px;padding:14px 16px;font-size:16px;font-weight:700;width:100%;background:var(--blue);color:white;margin-top:10px}button.secondary{background:#e9e9f2;color:var(--blue)}
 .file{padding:10px;background:#f8f8fc}canvas{display:block;width:100%;height:auto;border-radius:8px}.note{font-size:12px;color:#707186;line-height:1.45;margin:10px 4px 0}
 @media(max-width:430px){main{padding:14px 10px 28px}.panel,.preview{padding:13px}.row{gap:8px}}
 </style></head><body><main>
 <h1>A.S.D. GS RAIANO 1968</h1>
 <section class="panel">
 <div>
- <label for="photo">Foto della partita</label>
- <input id="photo" type="file" accept="image/*" style="position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;clip:rect(0,0,0,0);" aria-label="Scegli una foto dalla Galleria">
- <label class="photo-button" for="photo">＋ Carica foto dalla Galleria</label>
- <p class="note" id="photoStatus" aria-live="polite">Nessuna foto selezionata.</p>
+ <label for="photo">Carica la foto della partita</label>
+ <input class="file" id="photo" type="file" accept="image/*">
+ <button type="button" id="loadPhoto">Carica foto</button>
+ <p class="note" id="photoStatus" aria-live="polite">Seleziona una foto e poi premi “Carica foto”.</p>
 </div>
 <div class="row field"><div><label for="home">Gol squadra sinistra</label><input id="home" inputmode="numeric" value=""></div><div><label for="away">Gol squadra destra</label><input id="away" inputmode="numeric" value=""></div></div>
 <div class="row field"><div><label for="scorersHome">Marcatori squadra sinistra</label><textarea id="scorersHome" placeholder="Uno per riga&#10;Rossi 23'&#10;Verdi 71'"></textarea></div><div><label for="scorersAway">Marcatori squadra destra</label><textarea style="text-align: left;" id="scorersAway" placeholder="Uno per riga&#10;Bianchi 12'&#10;Neri 84'"></textarea></div></div>
@@ -154,7 +154,15 @@ function loadSelectedFile(file) {
   }
 }
 
-$('photo').addEventListener('change', e => { const file=e.target.files&&e.target.files[0]; if(file) loadSelectedFile(file); });
+$('photo').addEventListener('change', e => {
+  const file=e.target.files&&e.target.files[0];
+  if(file) showLoadError('Foto selezionata. Premi “Carica foto” per inserirla nella grafica.');
+});
+$('loadPhoto').addEventListener('click', () => {
+  const file=$('photo').files&&$('photo').files[0];
+  if(!file){showLoadError('Prima scegli una foto dalla Galleria.');return;}
+  loadSelectedFile(file);
+});
 
 ['home', 'away', 'scorersHome', 'scorersAway'].forEach(id => {
   $(id).addEventListener('input', redraw);
