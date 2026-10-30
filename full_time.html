@@ -23,10 +23,10 @@ button{border:0;border-radius:12px;padding:14px 16px;font-size:16px;font-weight:
 </section><section class="preview"><canvas id="canvas"></canvas></section>
 </main>
 <script>
+let backgroundImage=null;
 const canvas=document.getElementById('canvas'),ctx=canvas.getContext('2d'),$=id=>document.getElementById(id);
-const original=new Image();original.src="";
 function draw(){
- if(!backgroundImage.complete||!backgroundImage.naturalWidth)return;
+ if(!backgroundImage||!backgroundImage.complete||!backgroundImage.naturalWidth){canvas.width=0;canvas.height=0;return;}
  const w=backgroundImage.naturalWidth,h=backgroundImage.naturalHeight;canvas.width=w;canvas.height=h;ctx.drawImage(backgroundImage,0,0,w,h);
  const blue='#333366',scale=w/671,score=`${$('home').value.trim()||'0'} - ${$('away').value.trim()||'0'}`;
  // Risultato centrato sull'asse centrale della grafica.
@@ -45,5 +45,5 @@ function draw(){
 function redraw(){document.fonts.ready.then(draw)}original.onload=redraw;
 $('photo').addEventListener('change',e=>{const file=e.target.files&&e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{const img=new Image();img.onload=()=>{backgroundImage=img;redraw()};img.src=reader.result};reader.readAsDataURL(file)});
 ['home','away','scorersHome','scorersAway'].forEach(id=>$(id).addEventListener('input',redraw));$('update').addEventListener('click',redraw);
-$('save').addEventListener('click',()=>document.fonts.ready.then(()=>{draw();const a=document.createElement('a');a.download='full-time.png';a.href=canvas.toDataURL('image/png');a.click()}));
+$('save').addEventListener('click',()=>{if(!backgroundImage||!backgroundImage.complete||!backgroundImage.naturalWidth){alert('Prima carica una foto della partita.');return;}document.fonts.ready.then(()=>{draw();const a=document.createElement('a');a.download='full-time.png';a.href=canvas.toDataURL('image/png');a.click()});});
 </script></body></html>
